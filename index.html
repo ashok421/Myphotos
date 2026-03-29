@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Photo Viewer</title>
+</head>
+<body>
+
+<h2>Photo Viewer</h2>
+
+<select id="year"></select>
+<select id="month"></select>
+
+<div id="gallery"></div>
+
+<script>
+let data = {};
+const baseUrl = "https://storage.googleapis.com/ashok_photos";
+
+// Load JSON
+fetch("photos.json")
+  .then(res => res.json())
+  .then(json => {
+    data = json;
+
+    const yearSelect = document.getElementById("year");
+
+    Object.keys(data).forEach(year => {
+      let opt = document.createElement("option");
+      opt.value = year;
+      opt.innerText = year;
+      yearSelect.appendChild(opt);
+    });
+  });
+
+// When year changes
+document.getElementById("year").onchange = function () {
+  const year = this.value;
+  const monthSelect = document.getElementById("month");
+
+  monthSelect.innerHTML = "";
+
+  Object.keys(data[year]).forEach(month => {
+    let opt = document.createElement("option");
+    opt.value = month;
+    opt.innerText = month;
+    monthSelect.appendChild(opt);
+  });
+};
+
+// When month changes
+document.getElementById("month").onchange = function () {
+  const year = document.getElementById("year").value;
+  const month = this.value;
+
+  const gallery = document.getElementById("gallery");
+  gallery.innerHTML = "";
+
+  data[year][month].forEach(file => {
+    let img = document.createElement("img");
+    img.src = `${baseUrl}/${year}/${month}/${file}`;
+    img.style.width = "200px";
+    img.style.margin = "10px";
+
+    gallery.appendChild(img);
+  });
+};
+</script>
+
+</body>
+</html>
